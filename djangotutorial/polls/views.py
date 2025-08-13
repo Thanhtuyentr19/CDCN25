@@ -30,7 +30,28 @@
 # Leave the rest of the views (detail, results, vote) unchanged
 
 
-from django.http import HttpResponse
+# from django.http import HttpResponse
+
+# def index(request):
+#     return HttpResponse("Hello, world. You're at the polls index.")
+
+
+from django.shortcuts import render, get_object_or_404
+from .models import Question
 
 def index(request):
-    return HttpResponse("Hello, world. You're at the polls index.")
+    # lấy 5 câu hỏi mới nhất
+    latest_question_list = Question.objects.order_by("-pub_date")[:5]
+    context = {"latest_question_list": latest_question_list}
+    return render(request, "polls/index.html", context)
+
+def detail(request, question_id):
+    # 404 nếu không có câu hỏi
+    question = get_object_or_404(Question, pk=question_id)
+    return render(request, "polls/detail.html", {"question": question})
+
+def results(request, question_id):
+    # hiện kết quả (tạm thời chỉ liệt kê; phần bỏ phiếu sẽ làm ở Part 4)
+    question = get_object_or_404(Question, pk=question_id)
+    return render(request, "polls/results.html", {"question": question})
+    
