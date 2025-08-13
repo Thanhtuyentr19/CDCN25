@@ -1,0 +1,9 @@
+/* polls/static/polls/style.css */
+li a { 
+  color: green;
+}
+
+/* (tuỳ chọn) đặt nền bằng ảnh đặt trong polls/static/polls/images/background.png */
+body {
+  background: white url("images/background.png") no-repeat right bottom;
+}
