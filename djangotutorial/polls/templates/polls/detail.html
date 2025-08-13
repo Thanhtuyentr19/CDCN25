@@ -4,16 +4,19 @@
   <body>
     <h1>{{ question.question_text }}</h1>
 
-    {% if question.choice_set.all %}
-      <ul>
-        {% for choice in question.choice_set.all %}
-          <li>{{ choice.choice_text }}</li>
-        {% endfor %}
-      </ul>
-    {% else %}
-      <p>No choices yet.</p>
-    {% endif %}
+    {% if error_message %}<p style="color:red;"><strong>{{ error_message }}</strong></p>{% endif %}
 
-    <p><a href="{% url 'polls:index' %}">Back to list</a></p>
+    <form action="{% url 'polls:vote' question.id %}" method="post">
+      {% csrf_token %}
+      {% for choice in question.choice_set.all %}
+        <div>
+          <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+          <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label>
+        </div>
+      {% endfor %}
+      <button type="submit">Vote</button>
+    </form>
+
+    <p><a href="{% url 'polls:index' %}">← Back to list</a></p>
   </body>
 </html>

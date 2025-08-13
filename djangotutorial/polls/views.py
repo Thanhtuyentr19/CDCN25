@@ -35,10 +35,48 @@
 # def index(request):
 #     return HttpResponse("Hello, world. You're at the polls index.")
 
-
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
-from .models import Question
+from django.urls import reverse
+from django.views import generic
+from .models import Question, Choice
 
+
+# --- Generic class-based views ---
+class IndexView(generic.ListView):
+    template_name = "polls/index.html"
+    context_object_name = "latest_question_list"
+
+    def get_queryset(self):
+        # 5 câu hỏi mới nhất
+        return Question.objects.order_by("-pub_date")[:5]
+
+class DetailView(generic.DetailView):
+    model = Question
+    template_name = "polls/detail.html"
+
+class ResultsView(generic.DetailView):
+    model = Question
+    template_name = "polls/results.html"
+
+# --- View function để xử lý POST form ---
+def vote(request, question_id):
+    question = get_object_or_404(Question, pk=question_id)
+    try:
+        selected_choice = question.choice_set.get(pk=request.POST["choice"])
+    except (KeyError, Choice.DoesNotExist):
+        # Chưa chọn gì hoặc choice không tồn tại -> hiển thị lại form + báo lỗi
+        return render(request, "polls/detail.html", {
+            "question": question,
+            "error_message": "Bạn chưa chọn phương án.",
+        })
+    else:
+        selected_choice.votes += 1
+        selected_choice.save()
+        # Quan trọng: luôn redirect sau khi xử lý POST để tránh người dùng bấm Reload bị vote lại
+        return HttpResponseRedirect(
+            reverse("polls:results", args=(question.id,))
+        )
 def index(request):
     # lấy 5 câu hỏi mới nhất
     latest_question_list = Question.objects.order_by("-pub_date")[:5]
@@ -54,4 +92,3 @@ def results(request, question_id):
     # hiện kết quả (tạm thời chỉ liệt kê; phần bỏ phiếu sẽ làm ở Part 4)
     question = get_object_or_404(Question, pk=question_id)
     return render(request, "polls/results.html", {"question": question})
-    
