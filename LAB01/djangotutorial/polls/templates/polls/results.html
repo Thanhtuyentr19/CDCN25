@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kết quả: {{ question.question_text }}</title>
+</head>
+<body>
+    <h1>Kết quả bình chọn cho: {{ question.question_text }}</h1>
+    <ul>
+    {% for choice in question.choices.all %}
+        <li>{{ choice.choice_text }} -- {{ choice.votes }} votes</li>
+    {% endfor %}
+    </ul>
+    <a href="{% url 'polls:detail' question.id %}">Quay lại bình chọn</a>
+</body>
+</html>

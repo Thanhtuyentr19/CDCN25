@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Polls Index</title>
+</head>
+<body>
+    <h1>Danh sách câu hỏi</h1>
+    {% if questions %}
+        <ul>
+        {% for question in questions %}
+            <li>
+                <strong>{{ question.question_text }}</strong> <br>
+                <em>Tags:</em> {% for tag in question.tags.all %}{{ tag.name }}{% if not forloop.last %}, {% endif %}{% endfor %}<br>
+                <em>Choices:</em>
+                <ul>
+                {% for choice in question.choices.all %}
+                    <li>{{ choice.choice_text }} ({{ choice.votes }} votes)</li>
+                {% empty %}
+                    <li>Không có lựa chọn nào.</li>
+                {% endfor %}
+                </ul>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>Không có câu hỏi nào.</p>
+    {% endif %}
+</body>
+</html>
